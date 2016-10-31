@@ -27,5 +27,97 @@
                 <version>1</version>
             </bundle>
         </depends_on>
+        <schema>
+            <add>
+                <table name="notification_type">
+                    <field name="notification_type_id" key="primary" auto-increment="Yes">
+                        <data_type>bigint</data_type>
+                        <label>Notification type #</label>
+                    </field>
+                    <field name="name">
+                        <data_type>varchar</data_type>
+                        <max_length>64</max_length>
+                        <label>Name of the type</label>
+                        <nullable>No</nullable>
+                    </field>
+                </table>
+                <table name="notification_type_description">
+                    <field name="notification_type_description_id">
+                        <data_type>bigint</data_type>
+                        <label>Notification type description #</label>
+                    </field>
+                    <field name="notification_type_id" key="foreign" referenced-table-name="notification_type" referenced-field-name="notification_type_id">
+                        <data_type>bigint</data_type>
+                        <label>Notification type #</label>
+                    </field>
+                    <field name="language_id" key="foreign" referenced-table-name="language" referenced-field-name="language_id">
+                        <data_type>bigint</data_type>
+                        <label>Language #</label>
+                    </field>
+                    <field name="label">
+                        <data_type>varchar</data_type>
+                        <max_length>128</max_length>
+                        <nullable>No</nullable>
+                        <label>Notification type label</label>
+                    </field>
+                    <field name="description">
+                        <data_type>text</data_type>
+                        <label>Notification type description</label>
+                    </field>
+                </table>
+                <table name="notification">
+                    <field name="notification_id" key="primary" auto-increment="Yes">
+                        <data_type>bigint</data_type>
+                        <label>Notification #</label>
+                    </field>
+                    <field name="notification_type_id" key="foreign" referenced-table-name="notification_type" referenced-field-name="notification_type_id">
+                        <data_type>bigint</data_type>
+                        <label>Notification type #</label>
+                    </field>
+                    <field name="raised_by_user_id" key="foreign" referenced-table-name="user" referenced-field-name="user_id">
+                        <data_type>bigint</data_type>
+                        <label>Raised by user #</label>
+                    </field>
+                    <field name="actioned">
+                        <data_type>boolean</data_type>
+                        <label>Whether this notification has been actioned</label>
+                    </field>
+                    <field name="actioned_by_user_id" key="foreign" referenced-table-name="user" referenced-field-name="user_id">
+                        <data_type>bigint</data_type>
+                        <label>Actioned by user #</label>
+                    </field>
+                    <field name="actioned_at">
+                        <data_type>locales_datetime</data_type>
+                        <label>When this item was actioned</label>
+                    </field>
+                    <field name="body">
+                        <data_type>text</data_type>
+                        <label>Free-form text field, intended for use as a messaging system</label>
+                    </field>
+                </table>
+                <table name="notification_recipient">
+                    <field name="notification_recipient_id" key="primary" auto-increment="Yes">
+                        <data_type>bigint</data_type>
+                        <label>Notification recipient #</label>
+                    </field>
+                    <field name="notification_id" key="foreign" referenced-table-name="notification" referenced-field-name="notification_id">
+                        <data_type>bigint</data_type>
+                        <label>Notification #</label>
+                    </field>
+                    <field name="user_id" key="foreign" referenced-table-name="user" referenced-field-name="user_id">
+                        <data_type>bigint</data_type>
+                        <label>User #</label>
+                    </field>
+                    <field name="seen">
+                        <data_type>boolean</data_type>
+                        <label>Whether this notification has been seen by the user</label>
+                    </field>
+                    <field name="seen_at">
+                        <data_type>locales_datetime</data_type>
+                        <label>When it was seen</label>
+                    </field>
+                </table>
+            </add>
+        </schema>
     </bundle>
 </adapt_framework>
