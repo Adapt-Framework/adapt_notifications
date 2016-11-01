@@ -40,6 +40,19 @@
                         <label>Name of the type</label>
                         <nullable>No</nullable>
                     </field>
+                    <field name="send_email">
+                        <data_type>boolean</data_type>
+                        <label>Whether to send an email</label>
+                    </field>
+                    <field name="batch_email">
+                        <data_type>boolean</data_type>
+                        <label>Whether the email can be batched</label>
+                    </field>
+                    <field name="email_template_base_name">
+                        <data_type>varchar</data_type>
+                        <max_length>256</max_length>
+                        <label>Base name for the email template</label>
+                    </field>
                 </table>
                 <table name="notification_type_description">
                     <field name="notification_type_description_id">
@@ -56,7 +69,7 @@
                     </field>
                     <field name="label">
                         <data_type>varchar</data_type>
-                        <max_length>128</max_length>
+                        <max_length>256</max_length>
                         <nullable>No</nullable>
                         <label>Notification type label</label>
                     </field>
@@ -94,6 +107,10 @@
                         <data_type>text</data_type>
                         <label>Free-form text field, intended for use as a messaging system</label>
                     </field>
+                    <field name="body_language_id" key="foreign" referenced-table-name="language" referenced-field-name="language_id">
+                        <data_type>bigint</data_type>
+                        <label>Language #</label>
+                    </field>
                 </table>
                 <table name="notification_recipient">
                     <field name="notification_recipient_id" key="primary" auto-increment="Yes">
@@ -115,6 +132,40 @@
                     <field name="seen_at">
                         <data_type>locales_datetime</data_type>
                         <label>When it was seen</label>
+                    </field>
+                    <field name="title">
+                        <data_type>varchar</data_type>
+                        <max_length>256</max_length>
+                        <label>Title of the notification in the user's language</label>
+                    </field>
+                </table>
+                <table name="notification_data">
+                    <field name="notification_data_id" key="primary" auto-increment="Yes">
+                        <data_type>bigint</data_type>
+                        <label>Notification data #</label>
+                    </field>
+                    <field name="notification_id" key="foreign" referenced-table-name="notification" referenced-field-name="notification_id">
+                        <data_type>bigint</data_type>
+                        <label>Notification #</label>
+                    </field>
+                    <field name="data_type_id" key="foreign" referenced-table-name="data_type" referenced-field-name="data_type_id">
+                        <data_type>bigint</data_type>
+                        <label>Data type #</label>
+                    </field>
+                    <field name="data_key">
+                        <data_type>varchar</data_type>
+                        <max_length>64</max_length>
+                        <label>Key of the data</label>
+                    </field>
+                    <field name="replace_key">
+                        <data_type>varchar</data_type>
+                        <max_length>32</max_length>
+                        <label>Replacement search string</label>
+                    </field>
+                    <field name="data_value">
+                        <data_type>varchar</data_type>
+                        <max_length>256</max_length>
+                        <label>The data itself</label>
                     </field>
                 </table>
             </add>
