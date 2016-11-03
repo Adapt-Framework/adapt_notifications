@@ -39,6 +39,7 @@ class model_notification extends \adapt\model
      */
     public function set_recipients_by_user_ids(array $recipients)
     {
+        $recipients = array_unique($recipients);
         foreach ($recipients as $recipient) {
             if (is_numeric($recipient)) {
                 $model = new model_notification_recipient();
