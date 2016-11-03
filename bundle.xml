@@ -138,6 +138,10 @@
                         <max_length>256</max_length>
                         <label>Title of the notification in the user's language</label>
                     </field>
+                    <field name="email_sent">
+                        <data_type>locales_datetime</data_type>
+                        <label>When the email was sent to this user</label>
+                    </field>
                 </table>
                 <table name="notification_data">
                     <field name="notification_data_id" key="primary" auto-increment="Yes">
