@@ -133,6 +133,10 @@
                         <data_type>locales_datetime</data_type>
                         <label>When it was seen</label>
                     </field>
+                    <field name="dismissed">
+                        <data_type>boolean</data_type>
+                        <label>Whether this has been actively dismissed by the user</label>
+                    </field>
                     <field name="title">
                         <data_type>varchar</data_type>
                         <max_length>256</max_length>

@@ -44,6 +44,7 @@ class model_notification extends \adapt\model
                 $model = new model_notification_recipient();
                 $model->user_id = $recipient;
                 $model->seen = false;
+                $model->dismissed = false;
                 $this->add($model);
             }
         }

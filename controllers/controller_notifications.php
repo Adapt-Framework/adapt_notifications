@@ -7,12 +7,6 @@ defined('ADAPT_STARTED') or die;
 
 class controller_notifications extends \adapt\controller
 {
-
-    public function permission_view_test()
-    {
-        return $this->session->is_logged_in;
-    }
-
     public function permission_view_api()
     {
         return $this->session->is_logged_in;
@@ -28,29 +22,14 @@ class controller_notifications extends \adapt\controller
         return $this->session->is_logged_in;
     }
 
-    public function permission_action_mark_actioned()
+    public function permission_action_mark_dismissed()
     {
         return $this->session->is_logged_in;
     }
 
-    public function view_test()
+    public function permission_action_mark_actioned()
     {
-        $this->content_type = 'application/json';
-        $notification = $this->notifications->new_notification();
-        $notification_type = new model_notification_type();
-        $notification_type->load_by_name('friendship_offered');
-        $notification->notification_type_id = $notification_type->notification_type_id;
-
-        $organisation = new model_organisation();
-        $organisation->load_by_name('test1');
-
-        $notification->add_to_organisation($organisation);
-        $notification->add_from_organisation($this->organisation);
-
-        $notification->set_recipients_by_user_ids(\delio\horizon\users\users::get_users_by_permission(['PERM_VIEW_OWN_USER'], 3));
-        $notification->save();
-
-        return json_encode($notification->to_hash());
+        return $this->session->is_logged_in;
     }
 
     /**
@@ -73,6 +52,11 @@ class controller_notifications extends \adapt\controller
         // Filter seen/unseen
         if (isset($this->request['seen'])) {
             $where->add(new sql_cond('nr.seen', sql::EQUALS, $this->request['seen']));
+        }
+
+        // Filter dismissed
+        if (isset($this->request['dismissed'])) {
+            $where->add(new sql_cond('nr.dismissed', sql::EQUALS, $this->request['dismissed']));
         }
 
         // Filter actioned
@@ -202,6 +186,47 @@ class controller_notifications extends \adapt\controller
             $this->respond('mark_seen', ['status' => 500, 'errors' => 'SQL server responded with an error', 'output' => $sql->errors(true)]);
         } else {
             $this->respond('mark_seen', ['status' => 200, 'message' => 'Notifications were marked as seen']);
+        }
+    }
+
+    /**
+     * Marks a set of notifications as being dismissed
+     */
+    public function action_mark_dismissed()
+    {
+        // Sanity check
+        if (!$this->request['notification_ids'] || !is_array($this->request['notification_ids']) || count($this->request['notification_ids']) == 0) {
+            $this->respond('mark_dismissed', ['status' => 400, 'errors' => 'You must provide some notification IDs']);
+            return;
+        }
+
+        // Integrity check
+        foreach ($this->request['notification_ids'] as $id) {
+            if (!is_numeric($id)) {
+                $this->respond('mark_dismissed', ['status' => 400, 'errors' => 'All IDs provided must be numbers']);
+                return;
+            }
+        }
+
+        // Perform the update
+        $sql = $this->data_source->sql;
+        $sql->update('notification_recipient')
+            ->set('dismissed', 'true')
+            ->where(
+                new sql_and(
+                    new sql_cond('date_deleted', sql::IS, new sql_null()),
+                    new sql_cond('dismissed', sql::EQUALS, 'false'),
+                    new sql_cond('user_id', sql::EQUALS, $this->session->user->user_id),
+                    new sql_cond('notification_id', sql::IN, '(' . implode(',', $this->request['notification_ids']) . ')')
+                )
+            );
+        $sql->execute();
+
+        // Check for errors and report
+        if (count($sql->errors()) > 0) {
+            $this->respond('mark_dismissed', ['status' => 500, 'errors' => 'SQL server responded with an error', 'output' => $sql->errors(true)]);
+        } else {
+            $this->respond('mark_dismissed', ['status' => 200, 'message' => 'Notifications were marked as seen']);
         }
     }
 
