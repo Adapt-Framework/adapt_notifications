@@ -7,6 +7,12 @@ defined('ADAPT_STARTED') or die;
 
 class controller_notifications extends \adapt\controller
 {
+    protected $_page_count;
+    protected $_row_count;
+    protected $_page;
+    protected $_items_per_page;
+    protected $_offset;
+
     public function permission_view_api()
     {
         return $this->session->is_logged_in;
@@ -41,6 +47,9 @@ class controller_notifications extends \adapt\controller
     public function view_notifications()
     {
         $this->content_type = 'application/json';
+
+        // Work out the pages
+        $this->sort_out_page();
 
         // Set up filters
         $where = new sql_and();
@@ -96,6 +105,10 @@ class controller_notifications extends \adapt\controller
             ->where($where)
             ->order_by('n.date_created', false);
 
+        // Work out pagination
+        $this->calculate_pages($sql);
+        $sql->limit($this->_items_per_page, $this->_offset);
+
         $results = $sql->execute()->results();
 
         for ($i = 0; $i < count($results); $i++) {
@@ -143,7 +156,16 @@ class controller_notifications extends \adapt\controller
             }
         }
 
-        return json_encode($results);
+        // Build result
+        $output = [
+            'total_notifications' => $this->_row_count,
+            'total_pages' => $this->_page_count,
+            'page' => $this->_page,
+            'items_per_page' => $this->_items_per_page,
+            'notifications' => $results
+        ];
+
+        return json_encode($output);
     }
 
     /**
@@ -329,5 +351,44 @@ class controller_notifications extends \adapt\controller
 
         // If no response has been found, return empty
         return '[]';
+    }
+
+    /**
+     * Sets the page requested and page size
+     */
+    protected function sort_out_page()
+    {
+        if (isset($this->request['page']) && is_numeric($this->request['page'])) {
+            $this->_page = $this->request['page'];
+        } else {
+            $this->_page = 1;
+        }
+
+        if (isset($this->request['items_per_page']) && is_numeric($this->request['items_per_page'])) {
+            $this->_items_per_page = $this->request['items_per_page'];
+        } else {
+            $this->_items_per_page = 20;
+        }
+    }
+
+    /**
+     * Works out the page offset
+     * @param \adapt\sql $sql
+     */
+    protected function calculate_pages($sql)
+    {
+        $count = $this->data_source->sql;
+        $count->select('count(*) as c')
+            ->from($sql, 'c');
+
+        $this->_row_count = $count->execute()->results()[0]['c'];
+
+        if ($this->_row_count > 0 && $this->_items_per_page > 0) {
+            $this->_page_count = ceil($this->_row_count / $this->_items_per_page);
+        } else {
+            $this->_page_count = 0;
+        }
+
+        $this->_offset = ($this->_items_per_page * ($this->_page - 1));
     }
 }
