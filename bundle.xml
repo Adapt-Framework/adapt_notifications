@@ -53,6 +53,11 @@
                         <max_length>256</max_length>
                         <label>Base name for the email template</label>
                     </field>
+                    <field name="bundle_name">
+                        <data_type>varchar</data_type>
+                        <max_length>128</max_length>
+                        <label>Bundle name</label>
+                    </field>
                 </table>
                 <table name="notification_type_description">
                     <field name="notification_type_description_id">
