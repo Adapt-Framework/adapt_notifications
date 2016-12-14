@@ -60,7 +60,7 @@
                     </field>
                 </table>
                 <table name="notification_type_description">
-                    <field name="notification_type_description_id">
+                    <field name="notification_type_description_id" key="primary" auto-increment="Yes">
                         <data_type>bigint</data_type>
                         <label>Notification type description #</label>
                     </field>
