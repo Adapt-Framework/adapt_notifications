@@ -175,14 +175,14 @@ class controller_notifications extends \adapt\controller
     {
         // Sanity check
         if (!$this->request['notification_ids'] || !is_array($this->request['notification_ids']) || count($this->request['notification_ids']) == 0) {
-            $this->respond('mark_seen', ['status' => 400, 'errors' => 'You must provide some notification IDs']);
+            $this->respond('mark_seen', ['status' => 'bad_request', 'status_code' => 400, 'errors' => 'You must provide some notification IDs']);
             return;
         }
 
         // Integrity check
         foreach ($this->request['notification_ids'] as $id) {
             if (!is_numeric($id)) {
-                $this->respond('mark_seen', ['status' => 400, 'errors' => 'All IDs provided must be numbers']);
+                $this->respond('mark_seen', ['status' => 'bad_request', 'status_code' => 400, 'errors' => 'All IDs provided must be numbers']);
                 return;
             }
         }
@@ -205,9 +205,9 @@ class controller_notifications extends \adapt\controller
 
         // Check for errors and report
         if (count($sql->errors()) > 0) {
-            $this->respond('mark_seen', ['status' => 500, 'errors' => 'SQL server responded with an error', 'output' => $sql->errors(true)]);
+            $this->respond('mark_seen', ['status' => 'failure', 'status_code' => 500, 'errors' => 'SQL server responded with an error', 'output' => $sql->errors(true)]);
         } else {
-            $this->respond('mark_seen', ['status' => 200, 'message' => 'Notifications were marked as seen']);
+            $this->respond('mark_seen', ['status' => 'success', 'status_code' => 200, 'message' => 'Notifications were marked as seen']);
         }
     }
 
@@ -218,14 +218,14 @@ class controller_notifications extends \adapt\controller
     {
         // Sanity check
         if (!$this->request['notification_ids'] || !is_array($this->request['notification_ids']) || count($this->request['notification_ids']) == 0) {
-            $this->respond('mark_dismissed', ['status' => 400, 'errors' => 'You must provide some notification IDs']);
+            $this->respond('mark_dismissed', ['status' => 'bad_request', 'status_code' => 400, 'errors' => 'You must provide some notification IDs']);
             return;
         }
 
         // Integrity check
         foreach ($this->request['notification_ids'] as $id) {
             if (!is_numeric($id)) {
-                $this->respond('mark_dismissed', ['status' => 400, 'errors' => 'All IDs provided must be numbers']);
+                $this->respond('mark_dismissed', ['status' => 'bad_request', 'status_code' => 400, 'errors' => 'All IDs provided must be numbers']);
                 return;
             }
         }
@@ -246,9 +246,9 @@ class controller_notifications extends \adapt\controller
 
         // Check for errors and report
         if (count($sql->errors()) > 0) {
-            $this->respond('mark_dismissed', ['status' => 500, 'errors' => 'SQL server responded with an error', 'output' => $sql->errors(true)]);
+            $this->respond('mark_dismissed', ['status' => 'failure', 'status_code' => 500, 'errors' => 'SQL server responded with an error', 'output' => $sql->errors(true)]);
         } else {
-            $this->respond('mark_dismissed', ['status' => 200, 'message' => 'Notifications were marked as seen']);
+            $this->respond('mark_dismissed', ['status' => 'success', 'status_code' => 200, 'message' => 'Notifications were marked as seen']);
         }
     }
 
@@ -259,7 +259,7 @@ class controller_notifications extends \adapt\controller
     {
         // Sanity check
         if (!$this->request['notification_ids'] || !is_array($this->request['notification_ids']) || count($this->request['notification_ids']) == 0) {
-            $this->respond('mark_actioned', ['status' => 400, 'errors' => 'You must provide some notification IDs']);
+            $this->respond('mark_actioned', ['status' => 'bad_request', 'status_code' => 400, 'errors' => 'You must provide some notification IDs']);
             return;
         }
 
@@ -267,7 +267,7 @@ class controller_notifications extends \adapt\controller
         foreach ($this->request['notification_ids'] as $id) {
             // Simple numeric check
             if (!is_numeric($id)) {
-                $this->respond('mark_actioned', ['status' => 400, 'errors' => 'All IDs provided must be numbers']);
+                $this->respond('mark_actioned', ['status' => 'bad_request', 'status_code' => 400, 'errors' => 'All IDs provided must be numbers']);
                 return;
             }
         }
@@ -312,9 +312,9 @@ class controller_notifications extends \adapt\controller
 
         // Check for errors and report
         if (count($sql->errors()) > 0) {
-            $this->respond('mark_actioned', ['status' => 500, 'errors' => 'SQL server responded with an error', 'output' => $sql->errors(true)]);
+            $this->respond('mark_actioned', ['status' => 'failure', 'status_code' => 500, 'errors' => 'SQL server responded with an error', 'output' => $sql->errors(true)]);
         } else {
-            $this->respond('mark_actioned', ['status' => 200, 'message' => 'Notifications were marked as actioned']);
+            $this->respond('mark_actioned', ['status' => 'success', 'status_code' => 200, 'message' => 'Notifications were marked as actioned']);
         }
     }
 
