@@ -87,6 +87,7 @@ class controller_notifications extends \adapt\controller
             'seen_at' => 'nr.seen_at',
             'title' => 'nr.title',
             'type' => 'nt.name',
+            'raised' => 'n.date_created'
         ];
 
         $sql = $this->data_source->sql;
