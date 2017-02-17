@@ -129,8 +129,12 @@ class controller_notifications extends \adapt\controller
             // Raiser
             if ($results[$i]['raised_by_user_id']) {
                 $raiser = new model_user($results[$i]['raised_by_user_id']);
-                $raiser = $raiser->contact->to_hash();
-                unset($raiser['contact']['date_of_birth']);
+                if ($raiser->is_loaded) {
+                    $raiser = $raiser->contact->to_hash();
+                    unset($raiser['contact']['date_of_birth']);
+                } else {
+                    $raiser = array();
+                }
                 $results[$i]['raised_by_user'] = $raiser;
             } else {
                 // Be kind to James
@@ -140,8 +144,12 @@ class controller_notifications extends \adapt\controller
             // Actioner
             if ($results[$i]['actioned_by_user_id']) {
                 $actioner = new model_user($results[$i]['actioned_by_user_id']);
-                $actioner = $actioner->contact->to_hash();
-                unset($actioner['contact']['date_of_birth']);
+                if ($actioner->is_loaded) {
+                    $actioner = $actioner->contact->to_hash();
+                    unset($actioner['contact']['date_of_birth']);
+                } else {
+                    $actioner = array();
+                }
                 $results[$i]['actioned_by_user'] = $actioner;
             } else {
                 $results[$i]['actioned_by_user'] = [];
@@ -150,8 +158,12 @@ class controller_notifications extends \adapt\controller
             // Recipient
             if ($results[$i]['recipient_user_id']) {
                 $recipient = new model_user($results[$i]['recipient_user_id']);
-                $recipient = $recipient->contact->to_hash();
-                unset($recipient['contact']['date_of_birth']);
+                if ($recipient->is_loaded) {
+                    $recipient = $recipient->contact->to_hash();
+                    unset($recipient['contact']['date_of_birth']);
+                } else {
+                    $recipient = array();
+                }
                 $results[$i]['recipient_user'] = $recipient;
             } else {
                 $results[$i]['recipient_user'] = [];
